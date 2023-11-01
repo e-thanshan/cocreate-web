@@ -1,6 +1,6 @@
 const Navbar = () => {
     return (
-        <div className="justify-between flex p-3 font-mono items-center">
+        <div className=" bg-white fixed w-full justify-between flex p-3 font-mono items-center">
             <div className="">Cocrate</div>
             <div className="flex gap-5 items-center">
                 <div>Explore</div>
