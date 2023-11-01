@@ -73,37 +73,6 @@ const Filter = ({ data }) => {
 
 export default Filter;
 
-{/* <div class="relative group inline-block">
-  <button class="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded inline-flex items-center">
-    <span>Dropdown</span>
-    <svg
-      class="h-4 w-4 ml-2"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M19 9l-7 7-7-7"
-      ></path>
-    </svg>
-  </button>
-  <ul class="absolute hidden text-gray-700 pt-2 group-hover:block">
-    <li>
-      <a href="#" class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap">Option 1</a>
-    </li>
-    <li>
-      <a href="#" class="bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap">Option 2</a>
-    </li>
-    <li>
-      <a href="#" class="rounded-b bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap">Option 3</a>
-    </li>
-  </ul>
-</div> */}
-
 
 
 
