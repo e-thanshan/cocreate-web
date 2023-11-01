@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import ExplorePage from './pages/ExplorePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import ProjectPage from './pages/ProjectPage.jsx';
 import './index.css';
 import {
   createBrowserRouter,
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />
+  },
+  {
+    path: "/project",
+    element: <ProjectPage />
   }
 ])
 
