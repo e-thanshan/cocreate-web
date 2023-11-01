@@ -4,7 +4,7 @@ const ProjectCard = ({data}) => {
             <div className="px-4 py-5 sm:p-6">
                 {data.name}
                 <br />
-                {data.description}
+                {data.Description}
             </div>
         </div>
     );
