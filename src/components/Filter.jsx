@@ -1,7 +1,7 @@
 const Filter = ({ data }) => {
   return (
     <div className="">
-      <div className="justify-between items-center flex border-2 w-5/6 h-10 rounded-lg">
+      <div className="justify-between items-center flex border-2 w-5/6 h-10 rounded-lg overflow-visible">
         <input type="text" className="w-full h-full pl-2"></input>
         <div className="pr-2">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

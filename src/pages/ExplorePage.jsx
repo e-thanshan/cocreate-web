@@ -20,7 +20,9 @@ const ExplorePage = () => {
                     <h1 className="text-xl pl-1.5">Discover what the world has to offer.</h1>
                 </div>
                 <div className="grid grid-cols-3">
-                    <div className="col-span-1"><Filter/></div>
+                    <div className="col-span-1">
+                        <Filter/>
+                    </div>
                     <div className="col-span-2 grid grid-cols-3 gap-3">
                         {data.map(v => {
                             return (
