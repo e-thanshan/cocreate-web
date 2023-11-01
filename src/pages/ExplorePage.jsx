@@ -1,15 +1,25 @@
 import Navbar from "../components/Navbar"
 import ProjectCard from "../components/ProjectCard"
 import Filter from "../components/Filter"
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from "../firebase";
+import { useEffect, useState } from "react";
 
 const ExplorePage = () => {
-    const data = [
-        {name: "Project1", description: "lorem ipsum"},
-        {name: "Project2", description: "lorem ipsum"},
-        {name: "Project3", description: "lorem ipsum"},
-        {name: "Project4", description: "lorem ipsum"},
-        {name: "Project5", description: "lorem ipsum"}
-    ];
+    const [data, setData] = useState([]);
+
+    const fetchProjects = async () => {
+        await getDocs(collection(db, "Projects")).then((querySnapshot) => {
+            const newData = querySnapshot.docs.map((doc) => ({...doc.data(), id:doc.id }));
+            setData(newData);                
+            console.log(newData);
+        })
+    }
+
+    useEffect(() => {
+        fetchProjects();
+    }, []);
+
 
     return (
         <div>
@@ -24,9 +34,9 @@ const ExplorePage = () => {
                         <Filter/>
                     </div>
                     <div className="col-span-2 grid grid-cols-3 gap-3">
-                        {data.map(v => {
+                        {data.map((v, i) => {
                             return (
-                                <ProjectCard data={v}/>
+                                <ProjectCard key={i} data={v}/>
                             );
                         })}
                     </div>
