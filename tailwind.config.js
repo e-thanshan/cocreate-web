@@ -8,6 +8,9 @@ export default {
     extend: {
       spacing: {
         '15': '3.75rem',
+      },
+      colors: {
+        'turq': '#1B9AAA'
       }
     },
   },
