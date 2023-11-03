@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from 'firebase/firestore';
+import { DocumentReference, doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 
 const ProjectPage = () => {
@@ -9,21 +9,18 @@ const ProjectPage = () => {
     const urlParams = new URLSearchParams(window.location.search);
 
     const fetchData = async () => {
-        const docSnap = await getDoc(doc(db, "Projects", urlParams.get("id"))).then(doc => {
-            let projectData = doc.data();
-            projectData.id = doc.id;
-            console.log(projectData.creatorRef);
-            if (projectData.creatorRef) {
-                projectData.creatorRef.get().then(res => {
-                    projectData.creator = res.data();
-                })
-                .catch(err => console.error(err));
-            }
-            return projectData;
-        });
+        const docSnap = await getDoc(doc(db, "Projects", urlParams.get("id")));
 
-        setData(docSnap);
-        console.log(docSnap);
+        let projectData = docSnap.data();
+        projectData.id = doc.id;
+        if (projectData.creator) {
+            await getDoc(doc(db, 'Users', projectData.creator._key.path.segments.at(-1))).then(res => {
+                projectData.creator = res.data();
+            })
+            .catch(err => console.error(err));
+        }
+
+        setData(projectData);
     }
 
 
