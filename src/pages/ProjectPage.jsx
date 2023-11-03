@@ -1,7 +1,8 @@
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import { DocumentReference, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
+import { Link } from "react-router-dom";
 
 const ProjectPage = () => {
     const [data, setData] = useState({});
@@ -10,12 +11,11 @@ const ProjectPage = () => {
 
     const fetchData = async () => {
         const docSnap = await getDoc(doc(db, "Projects", urlParams.get("id")));
-
         let projectData = docSnap.data();
-        projectData.id = doc.id;
+        projectData.id = docSnap.id;
         if (projectData.creator) {
             await getDoc(doc(db, 'Users', projectData.creator._key.path.segments.at(-1))).then(res => {
-                projectData.creator = res.data();
+                projectData.creator = {...res.data(), id: res.id};
             })
             .catch(err => console.error(err));
         }
@@ -39,7 +39,7 @@ const ProjectPage = () => {
                         <div className="text-white px-4 py-2 rounded-md bg-turq">Request to Join</div>
                     </div>
                     <div className="flex justify-between">
-                        <h3 className="pt-8 text-xl">By <a href=""></a></h3>
+                        <h3 className="pt-8 text-xl">By <Link to={`/user?id=${data.creator?.id}`} className="cursor-pointer text-turq">@{data.creator?.username}</Link></h3>
                         <div className="flex items-center">
                             <h3 className="text-xl pr-3">Collaborators:</h3>
                             <div className="flex gap-2">
@@ -59,11 +59,9 @@ const ProjectPage = () => {
                 <div className="grid grid-cols-12 mt-10 gap-10">
                     <div className="col-span-5 items-center flex border-2 h-80 rounded-lg ">
                     </div>
-                    <div className="col-span-7 max-w- max-h-80">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Id nibh tortor id aliquet lectus proin nibh nisl. Tellus cras adipiscing enim eu turpis egestas. Velit scelerisque in dictum non consectetur a erat nam. Feugiat pretium nibh ipsum consequat nisl vel pretium. Vel elit scelerisque mauris pellentesque pulvinar pellentesque. Nisi est sit amet facilisis magna etiam tempor orci. Eu consequat ac felis donec. Quisque egestas diam in arcu cursus euismod quis. Proin libero nunc consequat interdum. Magna ac placerat vestibulum lectus mauris. Mauris rhoncus aenean vel elit scelerisque. Sit amet aliquam id diam maecenas ultricies mi eget mauris.
-
-                        Eros in cursus turpis massa. Sit amet nulla facilisi morbi tempus iaculis urna. Dolor morbi non arcu risus quis varius quam. Viverra vitae congue eu consequat ac felis donec et odio. Semper eget duis at tellus at urna condimentum. Velit sed ullamcorper morbi tincidunt ornare massa. Phasellus egestas tellus rutrum tellus pellentesque eu tincidunt. Dictum at tempor commodo ullamcorper a lacus. Ut placerat orci nulla pellentesque. Pellentesque habitant morbi tristique senectus et netus et. Integer feugiat scelerisque varius morbi enim nunc. Aliquet nibh praesent tristique magna sit amet purus gravida.
-
-                        Quisque egestas diam in arcu cursus euismod quis viverra nibh. </div>
+                    <div className="col-span-7 max-w- max-h-80">
+                        {data.Description}
+                    </div>
                 </div>
             </div>
 
