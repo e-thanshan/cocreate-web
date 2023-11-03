@@ -8,7 +8,7 @@ import Pill from "../components/Pill"
 
 const ExplorePage = () => {
     const [data, setData] = useState([]);
-    const skills = ["Java", "C++", "C#"];
+    const skills = ["Java", "HTML", "C#"];
     const fetchProjects = async () => {
         await getDocs(collection(db, "Projects")).then((querySnapshot) => {
             const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
