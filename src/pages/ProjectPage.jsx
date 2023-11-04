@@ -4,6 +4,16 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { Link } from "react-router-dom";
 
+
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+// import required modules
+import { Pagination, Navigation } from 'swiper/modules';
 const ProjectPage = () => {
     const [data, setData] = useState({});
 
@@ -15,9 +25,9 @@ const ProjectPage = () => {
         projectData.id = docSnap.id;
         if (projectData.creator) {
             await getDoc(doc(db, 'Users', projectData.creator._key.path.segments.at(-1))).then(res => {
-                projectData.creator = {...res.data(), id: res.id};
+                projectData.creator = { ...res.data(), id: res.id };
             })
-            .catch(err => console.error(err));
+                .catch(err => console.error(err));
         }
 
         setData(projectData);
@@ -57,9 +67,30 @@ const ProjectPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-12 mt-10 gap-10">
-                    <div className="col-span-5 items-center flex border-2 h-80 rounded-lg ">
+                    <div className="col-span-5 items-center flex rounded-lg">
+                        <>
+                            <Swiper
+                                slidesPerView={1}
+                                spaceBetween={30}
+                                loop={true}
+                                pagination={{
+                                    clickable: true,
+                                }}
+                                navigation={true}
+                                modules={[Pagination, Navigation]}
+                                className="mySwiper"
+                            >
+                                <SwiperSlide className="!my-auto !max-h-80">
+                                    <img className="!object-contain" src="https://media.wired.co.uk/photos/606db3bf938ecee6e930f3be/1:1/w_1280,h_1280,c_limit/flappybird-1.jpg" alt="" />
+                                </SwiperSlide>
+                                <SwiperSlide className="!my-auto">
+                                    <img src="https://images.yourstory.com/cs/2/96eabe90392211eb93f18319e8c07a74/Imageg79l-1682602936960.jpg?w=1152&fm=auto&ar=2:1&mode=crop&crop=faces" alt="" />
+                                </SwiperSlide>
+                                <SwiperSlide>Slide 3</SwiperSlide>
+                            </Swiper>
+                        </>
                     </div>
-                    <div className="col-span-7 max-w- max-h-80">
+                    <div className="col-span-7 max-w-full max-h-80">
                         {data.Description}
                     </div>
                 </div>
