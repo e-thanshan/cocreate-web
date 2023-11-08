@@ -30,10 +30,19 @@ const ProjectPage = () => {
                 .catch(err => console.error(err));
         }
 
+        const collabArray = [];
+        if (projectData.Collaborators) {
+            projectData.Collaborators.forEach(async user => {
+                await getDoc(doc(db, 'Users', user._key.path.segments.at(-1))).then(res => {
+                    collabArray.push({ ...res.data() });
+                })
+                .catch(err => console.error(err));
+            });
+            projectData.Collaborators = collabArray;
+        }
+
         setData(projectData);
     }
-
-
 
     useEffect(() => {
         fetchData();
@@ -78,15 +87,16 @@ const ProjectPage = () => {
                                 }}
                                 navigation={true}
                                 modules={[Pagination, Navigation]}
-                                className="mySwiper"
-                            >
-                                <SwiperSlide className="!my-auto !max-h-80">
-                                    <img className="!object-contain" src="https://media.wired.co.uk/photos/606db3bf938ecee6e930f3be/1:1/w_1280,h_1280,c_limit/flappybird-1.jpg" alt="" />
-                                </SwiperSlide>
-                                <SwiperSlide className="!my-auto">
-                                    <img src="https://images.yourstory.com/cs/2/96eabe90392211eb93f18319e8c07a74/Imageg79l-1682602936960.jpg?w=1152&fm=auto&ar=2:1&mode=crop&crop=faces" alt="" />
-                                </SwiperSlide>
-                                <SwiperSlide>Slide 3</SwiperSlide>
+                                className="mySwiper">
+                                {
+                                    data.Images?.map((url, i) => {
+                                        return (
+                                            <SwiperSlide key={i} className="!my-auto !max-h-80">
+                                                <img className="!object-cover -translate-y-1/4" src={url} alt={'image' + i} />
+                                            </SwiperSlide>
+                                        );
+                                    })
+                                }
                             </Swiper>
                         </>
                     </div>
