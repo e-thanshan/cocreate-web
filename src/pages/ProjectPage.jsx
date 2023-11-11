@@ -1,9 +1,9 @@
 import Navbar from "../components/Navbar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { Link } from "react-router-dom";
-
+import { Dialog, Transition } from '@headlessui/react'
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -16,8 +16,19 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper/modules';
 const ProjectPage = () => {
     const [data, setData] = useState({});
+    const [reason, setReason] = useState("");
 
     const urlParams = new URLSearchParams(window.location.search);
+
+    const [isOpen, setIsOpen] = useState(false)
+
+    function closeModal() {
+      setIsOpen(false)
+    }
+  
+    function openModal() {
+      setIsOpen(true)
+    }
 
     const fetchData = async () => {
         const docSnap = await getDoc(doc(db, "Projects", urlParams.get("id")));
@@ -53,11 +64,18 @@ const ProjectPage = () => {
             <Navbar />
             <div className="p-6">
                 <div className="pt-32 gap-10">
-                    <div className="flex justify-between items-center">
+                    <div className="md:flex justify-between items-center">
                         <h1 className="text-5xl">{data.name}</h1>
-                        <div className="text-white px-4 py-2 rounded-md bg-turq">Request to Join</div>
+                        {/* <div className="text-white px-4 py-2 w-fit mt-5 md:mt-0 rounded-md bg-turq">Request to Join</div> */}
+                        <button
+                            type="button"
+                            onClick={openModal}
+                            className="text-white px-4 py-2 w-fit mt-5 md:mt-0 rounded-md bg-turq"
+                        >
+                        Request to Join
+                        </button>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="md:flex justify-between">
                         <h3 className="pt-8 text-xl">By <Link to={`/user?id=${data.creator?.id}`} className="cursor-pointer text-turq">@{data.creator?.username}</Link></h3>
                         <div className="flex items-center">
                             <h3 className="text-xl pr-3">Collaborators:</h3>
@@ -75,7 +93,7 @@ const ProjectPage = () => {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-12 mt-10 gap-10">
+                <div className="md:grid grid-cols-12 mt-10 gap-10">
                     <div className="col-span-5 items-center flex rounded-lg">
                         <>
                             <Swiper
@@ -105,8 +123,63 @@ const ProjectPage = () => {
                     </div>
                 </div>
             </div>
+            
 
-        </>
+
+
+
+            <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Request to join
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows="4" cols="50" placeholder='Why?' className="rounded-md border w-full h-20"></textarea>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent text-white bg-turq px-4 py-2 text-sm font-medium hover:bg-white-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      oki i go cry now sad
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>  
+        </>                
     );
 }
 

@@ -52,11 +52,11 @@ const LoginPage = () => {
         <div className="flex justify-center items-center h-screen">
             <div className="overflow-hidden rounded-lg bg-white shadow-lg">
                 <div className="px-4 py-5 sm:p-6">
-                    <div className="text-center text-xl">Login</div>
-                    <div className=''>
-                        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button onClick={onSubmit}>Submit</button>
+                    <div className="text-center text-xl my-5">Login</div>
+                    <div className='flex flex-col gap-3'>
+                        <input className='border-2 rounded-md p-1' placeholder='Email' type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input className='border-2 rounded-md p-1' placeholder='Password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <button className='bg-[#800000] text-white rounded py-2 px-4' onClick={onSubmit}>Submit</button>
                     </div>
                     <button id="rosefireButton" type="button" 
                         className="block my-15 mx-auto text-white bg-[#800000]
