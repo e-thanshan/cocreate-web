@@ -76,7 +76,7 @@ const ProfilePage = () => {
                     {projects.map(project => {
                         return (
                             <div className="col-span-1">
-                                <ProjectCard key={project.id} data={project.data} />
+                                <ProjectCard key={project.id} data={project.data} id={project.id} />
                             </div>
                         );
                     })}    

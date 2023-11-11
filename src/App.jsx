@@ -5,7 +5,6 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import AppContext from './components/AppContext';
-import ReactDOM from 'react-dom/client';
 import ExplorePage from './pages/ExplorePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import ProjectPage from './pages/ProjectPage.jsx';
@@ -36,10 +35,17 @@ const router = createBrowserRouter([
 ])
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  const contextSettings = {
+    user,
+    setUser,
+  };
+
   return (
-    <>
+    <AppContext.Provider value={contextSettings}>
       <RouterProvider router={router} />
-    </>
+    </AppContext.Provider>
   )
 }
 

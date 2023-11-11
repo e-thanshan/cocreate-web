@@ -16,6 +16,8 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper/modules';
 const ProjectPage = () => {
     const [data, setData] = useState({});
+    const [collabs, setCollabs] = useState([]);
+    const [languages, setLanguages] = useState([]);
     const [reason, setReason] = useState("");
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -41,16 +43,24 @@ const ProjectPage = () => {
                 .catch(err => console.error(err));
         }
 
-        const collabArray = [];
         if (projectData.Collaborators) {
             projectData.Collaborators.forEach(async user => {
                 await getDoc(doc(db, 'Users', user._key.path.segments.at(-1))).then(res => {
-                    collabArray.push({ ...res.data() });
+                    setCollabs([...collabs, {data: res.data(), id: res.id}]);
                 })
                 .catch(err => console.error(err));
             });
-            projectData.Collaborators = collabArray;
         }
+
+        if (projectData.Languages) {
+            projectData.Languages.forEach(async language => {
+                await getDoc(doc(db, 'Languages', language._key.path.segments.at(-1))).then(res => {
+                    setLanguages([...language, {data: res.data(), id: res.id}]);
+                })
+                .catch(err => console.error(err));
+            });
+        }
+
 
         setData(projectData);
     }

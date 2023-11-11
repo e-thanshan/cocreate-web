@@ -16,14 +16,12 @@ const ExplorePage = () => {
         await getDocs(collection(db, "Projects")).then((querySnapshot) => {
             const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             setData(newData);
-            console.log(newData);
         })
     }
     const fetchLanguages = async () => {
         await getDocs(collection(db, "Languages")).then((querySnapshot) => {
             const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             setLanguages(newData);
-            console.log(newData);
         })
     }
 
@@ -134,7 +132,7 @@ const ExplorePage = () => {
                     <div className="col-span-2 md:grid md:grid-cols-2 xl:grid-cols-3 gap-3">
                         {data.map((v, i) => {
                             return (
-                                <ProjectCard key={i} data={v} />
+                                <ProjectCard key={i} data={v} id={v.id}/>
                             );
                         })}
                     </div>

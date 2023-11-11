@@ -1,13 +1,15 @@
 import { UserCircleIcon } from '@heroicons/react/24/outline'
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Menu, Transition } from '@headlessui/react';
+import AppContext from './AppContext';
 
-const handleSignOut = () => {
+const handleSignOut = (context) => {
   signOut(auth).then(() => {
     // Sign-out successful.
-    console.log('signed out')
+    context.setUser(null);
+    
   }).catch((error) => {
     // An error happened.
     console.error(error);
@@ -20,6 +22,10 @@ function classNames(...classes) {
 }
 
 const Navbar = () => {
+  const userContext = useContext(AppContext);
+
+  console.log(userContext.user);
+
   return (
     <div className=" bg-white fixed w-full justify-between flex p-3 font-mono items-center">
       <div className="">Cocreate</div>
@@ -27,6 +33,9 @@ const Navbar = () => {
         <a href='/explore'>
           Explore
 
+        </a>
+        <a href='/createProject'>
+          Create
         </a>
         <a href='/project'>My Projects</a>
         <div className='signout'>
@@ -66,12 +75,12 @@ const Navbar = () => {
                         {({ active }) => (
                         <button
                             className={classNames(
-                            active ? 'bg-gray-100 text-red-600' : 'text-red-600',
+                              userContext.user ? 'bg-gray-100 text-red-600' : 'text-gray-700',
                             'block w-full px-4 py-2 text-left text-sm'
                             )}
-                            onClick={handleSignOut}
+                            onClick={userContext.user ? handleSignOut(userContext) : () => window.location.href = '/login'}
                         >
-                            Sign out
+                            {userContext.user ? 'Sign out' : 'Sign in'}
                         </button>
                         )}
                     </Menu.Item>

@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {  createUserWithEmailAndPassword, signInWithCustomToken  } from 'firebase/auth';
 import { auth } from '../firebase';
+import AppContext from '../components/AppContext';
 
 const LoginPage = () => {
+    const userContext = useContext(AppContext);
+
     const navigate = useNavigate();
  
     const [email, setEmail] = useState('')
@@ -16,7 +19,7 @@ const LoginPage = () => {
         .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
-            console.log(user);
+            userContext.setUser(user);
             navigate("/explore")
             // ...
         })
@@ -36,7 +39,9 @@ const LoginPage = () => {
 				return;
 			}
 			console.log("Rosefire success!", rfUser);
-			await signInWithCustomToken(auth, rfUser.token).then(() => {
+			await signInWithCustomToken(auth, rfUser.token).then((userCredential) => {
+                const user = userCredential.user;
+                userContext.setUser(user);
                 navigate("/explore");
             }).catch((error) => {
 				if (error.code === 'auth/invalid-custom-token') {
@@ -56,7 +61,7 @@ const LoginPage = () => {
                     <div className='flex flex-col gap-3'>
                         <input className='border-2 rounded-md p-1' placeholder='Email' type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <input className='border-2 rounded-md p-1' placeholder='Password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button className='bg-[#800000] text-white rounded py-2 px-4' onClick={onSubmit}>Submit</button>
+                        <button className='bg-turq text-white rounded py-2 px-4' onClick={onSubmit}>Submit</button>
                     </div>
                     <button id="rosefireButton" type="button" 
                         className="block my-15 mx-auto text-white bg-[#800000]
