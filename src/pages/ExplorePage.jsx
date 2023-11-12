@@ -9,13 +9,16 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 const ExplorePage = () => {
     const [data, setData] = useState([]);
+    const [displayed, setDisplayed] = useState([]);
     const [languages, setLanguages] = useState([]);
     const [selectedLanguages, setSelectedLanguages] = useState([]);
+    const [search, setSearch] = useState('');
     const [query, setQuery] = useState('');
     const fetchProjects = async () => {
         await getDocs(collection(db, "Projects")).then((querySnapshot) => {
             const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             setData(newData);
+            setDisplayed(newData);
         })
     }
     const fetchLanguages = async () => {
@@ -23,6 +26,14 @@ const ExplorePage = () => {
             const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             setLanguages(newData);
         })
+    }
+
+    const filterProjects = () => {
+        const result = data.filter((project) => {
+            return (project.name.toLowerCase().includes(search.toLowerCase()) && selectedLanguages.every((language) => project.Languages.some((projectLanguage) => projectLanguage._key.path.segments.at(-1) === language.id)));
+        });
+
+        setDisplayed(result);
     }
 
     const filteredLanguages =
@@ -40,6 +51,9 @@ const ExplorePage = () => {
         fetchLanguages();
     }, []);
 
+    useEffect(() => {
+        filterProjects();
+    }, [search, selectedLanguages]);
 
     return (
         <div>
@@ -53,7 +67,7 @@ const ExplorePage = () => {
                     <div className="col-span-1">
                         <div>
                             <div className="justify-between items-center flex border-2 md:w-5/6 h-10 rounded-lg">
-                                <input type="text" className="w-full h-full pl-2"></input>
+                                <input type="text" className="w-full h-full pl-2" value={search} onChange={(e) => setSearch(e.target.value)}></input>
                                 <div className="pr-2">
                                     <MagnifyingGlassIcon className='h-6 w-6' />
                                 </div>
@@ -130,7 +144,7 @@ const ExplorePage = () => {
                         </div>
                     </div>
                     <div className="col-span-2 md:grid md:grid-cols-2 xl:grid-cols-3 gap-3">
-                        {data.map((v, i) => {
+                        {displayed.map((v, i) => {
                             return (
                                 <ProjectCard key={i} data={v} id={v.id}/>
                             );

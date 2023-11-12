@@ -9,22 +9,22 @@ const ProjectCard = ({data, id}) => {
     const fetchData = async () => {
 
         if (data.Languages) { 
-            await data.Languages.forEach(async (language, i) => {
-                await getDoc(doc(db, 'Languages', language._key.path.segments.at(-1))).then(res => {
-                    console.log(languages);
-                    console.log(res.data());
-
-                    setLanguages([...languages, {data: res.data(), id: res.id}]);
-                })
-                .catch(err => console.error(err));
-            });
+            try {
+                const languagePromises = data.Languages.map(async (language, i) => {
+                    const res = await getDoc(doc(db, 'Languages', language._key.path.segments.at(-1)));
+                    return res.data();
+                });
+                const languageData = await Promise.all(languagePromises);
+                setLanguages(languageData);
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         if (data.creator) {
             await getDoc(doc(db, 'Users', data.creator._key.path.segments.at(-1))).then(res => {
                 data.creator = { ...res.data(), id: res.id };
-            })
-                .catch(err => console.error(err));
+            }).catch(err => console.error(err));
         }
         
     }
@@ -33,7 +33,6 @@ const ProjectCard = ({data, id}) => {
         fetchData();
     }, []);
 
-    
     return (
         <div className="overflow-hidden border rounded-lg bg-white shadow-lg w-full cursor-pointer" onClick={() => window.location.href = '/project?id=' + id}>
             <div className="px-4 py-5 sm:p-6 ">
@@ -50,10 +49,9 @@ const ProjectCard = ({data, id}) => {
 
                 <div className="flex gap-2 pt-4 flex-wrap">
                     {languages.map((language, i) => {
-                        console.log(language);
                         return (
                             <div key={i} className="">
-                                <Pill key={language.id} data={language.data.name} />
+                                <Pill data={language.name} />
                             </div>
                         );
                     })}   

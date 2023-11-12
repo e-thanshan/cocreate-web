@@ -4,12 +4,12 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import AppContext from './components/AppContext';
 import ExplorePage from './pages/ExplorePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import ProjectPage from './pages/ProjectPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import NewProject from './pages/NewProject.jsx';
+import SignUpPage from './pages/SignUpPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -31,21 +31,16 @@ const router = createBrowserRouter([
   {
     path:"/createProject",
     element: <NewProject/>
+  },{
+    path:"/signup",
+    element: <SignUpPage/>
   }
 ])
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  const contextSettings = {
-    user,
-    setUser,
-  };
 
   return (
-    <AppContext.Provider value={contextSettings}>
-      <RouterProvider router={router} />
-    </AppContext.Provider>
+    <RouterProvider router={router} />
   )
 }
 

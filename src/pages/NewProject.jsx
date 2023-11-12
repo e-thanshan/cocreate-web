@@ -1,35 +1,48 @@
 import Navbar from "../components/Navbar"
 import Pill from "../components/Pill"
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, query, where, addDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useEffect, useState, Fragment } from "react";
 import { Combobox, Transition } from '@headlessui/react';
 
 const NewProjectPage = () => {
-    const [name,setName] = useState("");
+    const [name, setName] = useState("");
     const [images, setImages] = useState([]);
     const [imageUrl, setImageUrl] = useState("");
-    const [description,SetDescription] = useState("");
+    const [description, setDescription] = useState("");
     const [languages, setLanguages] = useState([]);
     const [selectedLanguages, setSelectedLanguages] = useState([]);
-    const [query, setQuery] = useState('')
+    const [lquery, setlQuery] = useState('')
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const [userData, setUserData] = useState({});
+
+    const fetchUserData = async () => {
+        if (user?.uid) {
+            await getDocs(query(collection(db, "Users"), where("authUID", "==", user.uid))).then((querySnapshot) => {
+            const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            setUserData(newData[0]);
+            });
+        } else {
+            window.location.href = '/login';
+        }
+    }
 
     const filteredLanguages =
-    query === ''
+    lquery === ''
       ? languages
       : languages.filter((language) =>
         language.name
             .toLowerCase()
             .replace(/\s+/g, '')
-            .includes(query.toLowerCase().replace(/\s+/g, ''))
+            .includes(lquery.toLowerCase().replace(/\s+/g, ''))
         )
 
     const fetchLanguages = async () => {
         await getDocs(collection(db, "Languages")).then((querySnapshot) => {
             const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             setLanguages(newData);
-            console.log(newData);
         })
     }
 
@@ -38,8 +51,34 @@ const NewProjectPage = () => {
         setImageUrl("");
     }
 
+
+    const onSubmit = async () => {
+        const langs = selectedLanguages.map((v) => {
+            return doc(db, "Languages", v.id);
+        });
+
+        const creator = doc(db, "Users", userData.id);
+
+        const projectData = {
+            name,
+            Description: description,
+            Images: images,
+            Languages: langs,
+            creator,
+            Collaborators: [], 
+            joinRequests: [],
+        }
+
+        await addDoc(collection(db, "Projects"), projectData).then((docRef) => {
+            window.location.href = `/project?id=${docRef.id}`;
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
     useEffect(() => {
         fetchLanguages();
+        fetchUserData();
     }, []);
 
     return (
@@ -67,7 +106,7 @@ const NewProjectPage = () => {
                         type="text"
                         placeholder='Enter Project Description'
                         value = {description}
-                        onChange = {(e)=> SetDescription(e.target.value)}
+                        onChange = {(e)=> setDescription(e.target.value)}
                         className="block w-full rounded-md border-0 py-1.5 pl-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-turq sm:text-sm sm:leading-6"
                     />
                 </div>
@@ -118,10 +157,10 @@ const NewProjectPage = () => {
                             leave="transition ease-in duration-100"
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
-                            afterLeave={() => setQuery('')}
+                            afterLeave={() => setlQuery('')}
                         >
                             <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                            {filteredLanguages.length === 0 && query !== '' ? (
+                            {filteredLanguages.length === 0 && lquery !== '' ? (
                                 <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                 Nothing found.
                                 </div>
@@ -165,7 +204,7 @@ const NewProjectPage = () => {
                 </Combobox>
                 </div>
                 <div className="py-15 flex w-full justify-center">
-                    <button className="border bg-turq py-2 px-4 rounded-md text-white">Create Project</button>
+                    <button className="border bg-turq py-2 px-4 rounded-md text-white" onClick={() => onSubmit()}>Create Project</button>
                 </div>
             </div>
             

@@ -1,14 +1,15 @@
 import { UserCircleIcon } from '@heroicons/react/24/outline'
 import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
-import { Fragment, useContext } from 'react';
+import { db, auth } from '../firebase';
+import { Fragment, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import AppContext from './AppContext';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
-const handleSignOut = (context) => {
+const handleSignOut = () => {
   signOut(auth).then(() => {
     // Sign-out successful.
-    context.setUser(null);
+    localStorage.removeItem('user');
+    window.location.href = '/explore';
     
   }).catch((error) => {
     // An error happened.
@@ -22,9 +23,21 @@ function classNames(...classes) {
 }
 
 const Navbar = () => {
-  const userContext = useContext(AppContext);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const [userData, setUserData] = useState({});
 
-  console.log(userContext.user);
+  const fetchUserData = async () => {
+    if (user?.uid) {
+      await getDocs(query(collection(db, "Users"), where("authUID", "==", user.uid))).then((querySnapshot) => {
+        const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setUserData(newData[0]);
+      });
+    }
+  }
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   return (
     <div className=" bg-white fixed w-full justify-between flex p-3 font-mono items-center">
@@ -34,10 +47,12 @@ const Navbar = () => {
           Explore
 
         </a>
-        <a href='/createProject'>
-          Create
-        </a>
-        <a href='/project'>My Projects</a>
+        {user && (
+          <a href='/createProject'>
+            Create
+          </a>
+        )}
+        
         <div className='signout'>
           <Menu as="div" className="relative inline-block text-left">
             <div className='mt-1.5'>
@@ -57,33 +72,35 @@ const Navbar = () => {
             >
               <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classNames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                          'block px-4 py-2 text-sm'
-                        )}
-                      >
-                        Account settings
-                      </a>
-                    )}
-                  </Menu.Item>
-
+                  {user && (
                     <Menu.Item>
-                        {({ active }) => (
-                        <button
-                            className={classNames(
-                              userContext.user ? 'bg-gray-100 text-red-600' : 'text-gray-700',
-                            'block w-full px-4 py-2 text-left text-sm'
-                            )}
-                            onClick={userContext.user ? handleSignOut(userContext) : () => window.location.href = '/login'}
+                      {({ active }) => (
+                        <a
+                          href={`/user?id=${userData.id}`}
+                          className={classNames(
+                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
                         >
-                            {userContext.user ? 'Sign out' : 'Sign in'}
-                        </button>
-                        )}
+                          My Projects
+                        </a>
+                      )}
                     </Menu.Item>
+                  )}
+
+                  <Menu.Item>
+                      {({ active }) => (
+                      <button
+                          className={classNames(
+                            user ? 'bg-gray-100 text-red-600' : 'text-gray-700',
+                          'block w-full px-4 py-2 text-left text-sm'
+                          )}
+                          onClick={user ? () => handleSignOut() : () => window.location.href = '/login'}
+                      >
+                          {user ? 'Sign out' : 'Sign in'}
+                      </button>
+                      )}
+                  </Menu.Item>
                 </div>
               </Menu.Items>
             </Transition>
