@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar"
 import Pill from "../components/Pill"
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { collection, doc, getDocs, query, where, addDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, where, addDoc, updateDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useEffect, useState, Fragment } from "react";
 import { Combobox, Transition } from '@headlessui/react';
@@ -58,6 +58,7 @@ const NewProjectPage = () => {
         });
 
         const creator = doc(db, "Users", userData.id);
+        console.log(creator);
 
         const projectData = {
             name,
@@ -69,7 +70,10 @@ const NewProjectPage = () => {
             joinRequests: [],
         }
 
-        await addDoc(collection(db, "Projects"), projectData).then((docRef) => {
+        await addDoc(collection(db, "Projects"), projectData).then(async (docRef) => {
+            await updateDoc(doc(db, "Users", userData.id), {
+                Projects: [...userData.Projects, docRef],
+            });
             window.location.href = `/project?id=${docRef.id}`;
         }).catch((error) => {
             console.error(error);
