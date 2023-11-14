@@ -74,12 +74,13 @@ const LoginPage = () => {
                     <a href='/signup' className="border border-turq rounded block my-4 mx-auto text-turq text-center">
                         Sign Up
                     </a>
-                    <button id="rosefireButton" type="button" 
+                    {/* <button id="rosefireButton" type="button" 
                         className="block my-8 mx-auto text-white bg-[#800000]
                         text-lg py-2.5 px-7 rounded-md"
-                        onClick={rosefireSignIn}>
+                        onClick={rosefireSignIn}
+                    >
                         Sign in with Rosefire
-                    </button>
+                    </button> */}
                     <div id="firebaseui-auth-container"></div>
                 </div>
             </div>
